@@ -9,12 +9,15 @@
       <input
         ref="input"
         type="search"
-        :class="`form-control ${inputClass}`"
+        class="form-control"
+        :class="inputClassComputed"
         :name="inputName"
         :placeholder="placeholder"
         :aria-label="placeholder"
         :value="inputValue"
         :disabled="disabled"
+        :required="required"
+        :autofocus="autofocus"
         @focus="isFocused = true"
         @focusout="handleFocusOut"
         @input="handleInput($event.target.value)"
@@ -82,6 +85,14 @@ export default {
       type: Boolean,
       default: false
     },
+    required: {
+      type: Boolean,
+      default: false
+    },
+    autofocus: {
+      type: Boolean,
+      default: false
+    },
     data: {
       type: Array,
       required: true,
@@ -99,8 +110,8 @@ export default {
     },
     textVariant: String,
     inputClass: {
-      type: String,
-      default: ''
+      type: Object,
+      default: () => {}
     },
     inputName: {
       type: String,
@@ -130,6 +141,10 @@ export default {
       type: Boolean,
       default: true
     },
+    inputState: {
+      type: Boolean,
+      default: undefined
+    },
     placeholder: String,
     prepend: String,
     append: String,
@@ -152,6 +167,19 @@ export default {
           text: this.serializer(d)
         }
       })
+    },
+
+    inputClassComputed() {
+      if (typeof this.inputState === 'undefined') {
+        return this.inputClass
+      }
+
+      const className = this.inputState ? 'is-valid' : 'is-invalid'
+
+      return {
+        ...this.inputClass,
+        [className]: true
+      }
     }
   },
 
